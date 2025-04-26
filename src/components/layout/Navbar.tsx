@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Menu, Search, Bell, User, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import SearchBar from '../ui/SearchBar';
+import LoginModal from './auth/Login';
+import SignupModal from './auth/Register';
+
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -11,6 +14,12 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onMenuClick, onHomeClick }) => {
   const { theme, toggleTheme } = useTheme();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
+
+  const handleUserClick = () => {
+    setShowLoginModal(true);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 h-14 bg-white dark:bg-zinc-900 z-10 shadow-sm flex items-center px-4 transition-colors duration-200">
@@ -84,11 +93,29 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, onHomeClick }) => {
         </button>
         <button 
           className="p-2 mx-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-700"
+          onClick={handleUserClick}
           aria-label="User"
         >
           <User className="w-6 h-6 text-black dark:text-white" />
         </button>
       </div>
+
+      <LoginModal 
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onSwitchToSignup={() => {
+          setShowLoginModal(false);
+          setShowSignupModal(true);
+        }}
+      />
+      <SignupModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
+        onSwitchToLogin={() => {
+          setShowSignupModal(false);
+          setShowLoginModal(true);
+        }}
+      />
     </nav>
   );
 };
