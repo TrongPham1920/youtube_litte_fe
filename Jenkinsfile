@@ -25,8 +25,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "🚀 Building ${DOCKER_IMAGE}:${DOCKER_TAG} for linux/amd64..."
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", "--platform linux/amd64 .")
+                    echo "🚀 Building ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                 }
             }
         }
