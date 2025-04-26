@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'trong19/ytt_fe'
         DOCKER_TAG         = 'latest'
-
         TELEGRAM_BOT_TOKEN = credentials('TELEGRAM_BOT_TOKEN')
         TELEGRAM_CHAT_ID   = credentials('TELEGRAM_CHAT_ID')
     }
@@ -18,11 +17,8 @@ pipeline {
 
         stage('Prepare Config') {
             steps {
-     
-                withCredentials([file(credentialsId: 'config_file', variable: 'CONFIG_FILE')]) {
-                    sh 'mkdir -p $WORKSPACE/config'
-                    sh 'cp $CONFIG_FILE $WORKSPACE/config'
-                }
+                echo '🧪 Running tests...' 
+                // Nếu có test script, thay echo bằng sh 'npm test' hoặc tương tự
             }
         }
 
