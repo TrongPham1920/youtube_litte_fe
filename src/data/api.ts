@@ -1,3 +1,6 @@
+
+const BASE_URL = 'http://localhost:5000/api/v1';
+
 export interface LoginCredentials {
     email: string;
     password: string;
@@ -17,7 +20,7 @@ export interface ApiResponse {
 
 export const login = async (credentials: LoginCredentials): Promise<ApiResponse> => {
     try {
-        const response = await fetch('http://localhost:5000/api/v1/login', {
+        const response = await fetch(`${BASE_URL}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -47,7 +50,7 @@ export const login = async (credentials: LoginCredentials): Promise<ApiResponse>
 
 export const register = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
     try {
-        const response = await fetch('http://localhost:5000/api/v1/register', {
+        const response = await fetch(`${BASE_URL}/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
