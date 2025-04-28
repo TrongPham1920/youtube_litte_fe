@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Menu, Search, Bell, User, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
-import SearchBar from '../ui/SearchBar';
-import LoginModal from './auth/Login';
-import SignupModal from './auth/Register';
-
+import SearchBar from '../ui/SearchBar';  // Đảm bảo SearchBar được sử dụng
+import { AuthContext } from '../../context/AuthContext';
+import UserMenu from '../ui/UserMenu';  // Import UserMenu
 
 interface NavbarProps {
   onMenuClick: () => void;
   onHomeClick: () => void;
+ 
 }
 
 const Navbar: React.FC<NavbarProps> = ({ onMenuClick, onHomeClick }) => {
   const { theme, toggleTheme } = useTheme();
+  const {  logout } = useContext(AuthContext);  // Get user from context
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);  // For controlling dropdown visibility
 
   const handleUserClick = () => {
-    setShowLoginModal(true);
+    setDropdownOpen(!dropdownOpen);  // Toggle dropdown when User button is clicked
   };
 
   return (
@@ -91,6 +91,8 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, onHomeClick }) => {
         >
           <Bell className="w-6 h-6 text-black dark:text-white" />
         </button>
+
+        {/* User Menu with Dropdown Toggle */}
         <button 
           className="p-2 mx-1 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-700"
           onClick={handleUserClick}
@@ -98,24 +100,14 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, onHomeClick }) => {
         >
           <User className="w-6 h-6 text-black dark:text-white" />
         </button>
-      </div>
 
-      <LoginModal 
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        onSwitchToSignup={() => {
-          setShowLoginModal(false);
-          setShowSignupModal(true);
-        }}
-      />
-      <SignupModal
-        isOpen={showSignupModal}
-        onClose={() => setShowSignupModal(false)}
-        onSwitchToLogin={() => {
-          setShowSignupModal(false);
-          setShowLoginModal(true);
-        }}
-      />
+        {/* User Menu Dropdown */}
+        <UserMenu 
+          isOpen={dropdownOpen} 
+          onClose={() => setDropdownOpen(false)} 
+          onLogoutClick={logout}  // Call logout when user clicks "Logout"
+        />
+      </div>
     </nav>
   );
 };
