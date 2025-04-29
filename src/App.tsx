@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
 import VideoPage from './pages/VideoPage';
+import YourChannelPage from './pages/YourChannelPage';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'video' | 'your-channel'>('home');
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
 
   const handleVideoClick = (videoId: string) => {
@@ -18,16 +20,22 @@ function App() {
     setCurrentVideoId(null);
   };
 
+  const handleGoToYourChannel = () => {
+    setCurrentPage('your-channel');
+  };
+
   return (
-    <ThemeProvider>
-      <Layout onHomeClick={handleHomeClick}>
-        {currentPage === 'home' ? (
-          <HomePage onVideoClick={handleVideoClick} />
-        ) : (
-          <VideoPage videoId={currentVideoId} onVideoClick={handleVideoClick} />
-        )}
-      </Layout>
-    </ThemeProvider>
+    <AuthProvider> {/* Bọc toàn bộ App trong AuthProvider */}
+      <ThemeProvider>
+        <Layout onHomeClick={handleHomeClick} onGoToYourChannel={handleGoToYourChannel}>
+          {currentPage === 'home' && <HomePage onVideoClick={handleVideoClick} />}
+          {currentPage === 'video' && currentVideoId && (
+            <VideoPage videoId={currentVideoId} onVideoClick={handleVideoClick} />
+          )}
+          {currentPage === 'your-channel' && <YourChannelPage />}
+        </Layout>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

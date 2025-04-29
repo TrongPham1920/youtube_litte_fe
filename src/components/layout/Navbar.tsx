@@ -8,17 +8,21 @@ import UserMenu from '../ui/UserMenu';  // Import UserMenu
 interface NavbarProps {
   onMenuClick: () => void;
   onHomeClick: () => void;
- 
+  onGoToYourChannel: () => void; 
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onMenuClick, onHomeClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ onMenuClick, onHomeClick, onGoToYourChannel }) => {
   const { theme, toggleTheme } = useTheme();
-  const {  logout } = useContext(AuthContext);  // Get user from context
+  const {  logout } = useContext(AuthContext);  
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);  // For controlling dropdown visibility
-
+  const [dropdownOpen, setDropdownOpen] = useState(false);  
+//  const [currentPage, setCurrentPage] = useState<'home' | 'video' | 'your-channel'>('home'); 
   const handleUserClick = () => {
     setDropdownOpen(!dropdownOpen);  // Toggle dropdown when User button is clicked
+  };
+  const handleGoToYourChannel = () => {
+    console.log('Đi tới trang Your Channel!');
+    onGoToYourChannel();
   };
 
   return (
@@ -106,6 +110,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, onHomeClick }) => {
           isOpen={dropdownOpen} 
           onClose={() => setDropdownOpen(false)} 
           onLogoutClick={logout}  // Call logout when user clicks "Logout"
+          onGoToYourChannel={handleGoToYourChannel}
         />
       </div>
     </nav>
