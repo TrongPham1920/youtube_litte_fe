@@ -77,3 +77,4 @@ export const register = async (credentials: RegisterCredentials): Promise<ApiRes
         };
     }
 };
+
