@@ -3,6 +3,8 @@
 export const API_PATH = {
     LOGIN: getPath("login"),
     REGISTER: getPath("register"),
+    VIDEOS: getPath("videos"),
+    VIDEO_BY_ID: (id: string) => getPath(`videos/${id}`),
 };
 
 function getPath(path: string): string {

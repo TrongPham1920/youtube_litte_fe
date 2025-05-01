@@ -22,7 +22,13 @@ export interface ApiResponse {
         username: string;
     };
 }
-
+export interface Video {
+    _id?: string;
+    title: string;
+    description?: string;
+    videoUrl: string;
+    channelId: string;
+}
 // Function to handle API response
 const handleApiResponse = async (response: Response) => {
     const data = await response.json();
@@ -48,7 +54,7 @@ export const login = async (credentials: LoginCredentials): Promise<ApiResponse>
 // Register function
 export const register = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
     try {
-        const response = await fetch(API_PATH.LOGIN, { // Cập nhật đường dẫn API cho đăng ký
+        const response = await fetch(API_PATH.LOGIN, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,4 +65,30 @@ export const register = async (credentials: RegisterCredentials): Promise<ApiRes
     } catch {
         return { success: false };
     }
+};
+// Get all videos
+export const getAllVideos = async (): Promise<Video[]> => {
+    const response = await fetch(API_PATH.VIDEOS);
+    return response.json();
+};
+
+// Get video by ID
+export const getVideoById = async (id: string): Promise<Video> => {
+    const response = await fetch(API_PATH.VIDEO_BY_ID(id));
+    return response.json();
+};
+
+// Create a new video
+export const createVideo = async (video: Video): Promise<Video> => {
+    const response = await fetch(API_PATH.VIDEOS, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(video),
+    });
+
+    if (!response.ok) throw new Error("Failed to create video");
+
+    return response.json();
 };
