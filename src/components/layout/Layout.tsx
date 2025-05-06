@@ -5,9 +5,10 @@ import Sidebar from './Sidebar';
 interface LayoutProps {
   children: React.ReactNode;
   onHomeClick: () => void;
+  onGoToYourChannel: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, onHomeClick }) => {
+const Layout: React.FC<LayoutProps> = ({ children, onHomeClick, onGoToYourChannel }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
@@ -16,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onHomeClick }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 transition-colors duration-200">
-      <Navbar onMenuClick={toggleSidebar} onHomeClick={onHomeClick} />
+      <Navbar onMenuClick={toggleSidebar} onHomeClick={onHomeClick} onGoToYourChannel={onGoToYourChannel} />
       <Sidebar isOpen={sidebarOpen} onHomeClick={onHomeClick} />
       <main 
         className={`pt-14 transition-all duration-300 min-h-screen

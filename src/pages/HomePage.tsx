@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+// pages/HomePage.tsx
+import React, { useState, useEffect } from 'react';
 import VideoCard from '../components/ui/VideoCard';
-import { videos, categories } from '../data/mockData';
+import { getAllVideos, Video } from '../data/api/app/api'; // Giả định bạn đã tạo API để lấy video
+import { categories } from '../data/mockData'; // vẫn dùng category mock
 
 interface HomePageProps {
   onVideoClick: (videoId: string) => void;
@@ -8,10 +10,29 @@ interface HomePageProps {
 
 const HomePage: React.FC<HomePageProps> = ({ onVideoClick }) => {
   const [selectedCategory, setSelectedCategory] = useState('1'); // Default to 'All'
+  const [videos, setVideos] = useState<Video[]>([]);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const data = await getAllVideos();
+        setVideos(data);
+      } catch (err) {
+        console.error('Error fetching videos:', err);
+      }
+    };
+    fetchVideos();
+  }, []);
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId);
   };
+
+  // Giả định mỗi video có video.categoryId (nếu backend có field này)
+  const filteredVideos =
+    selectedCategory === '1'
+      ? videos
+      : videos.filter((video) => video.channelId === selectedCategory); // hoặc video.categoryId nếu backend có
 
   return (
     <div className="p-4 md:p-6">
@@ -36,11 +57,11 @@ const HomePage: React.FC<HomePageProps> = ({ onVideoClick }) => {
 
       {/* Videos Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {videos.map((video) => (
+        {filteredVideos.map((video) => (
           <VideoCard
-            key={video.id}
+            key={video._id}
             video={video}
-            onClick={onVideoClick}
+            onClick={() => onVideoClick(video._id!)}
           />
         ))}
       </div>

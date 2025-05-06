@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Modal from '../../ui/Modal';
 import InputField from '../../ui/InputField';
 import PasswordInputField from '../../ui/PasswordInputField';
-import { register } from '../../../data/api';
+import { register } from '../../../data/api/app/api';
 
 
 interface SignupModalProps {
