@@ -5,6 +5,11 @@ export const API_PATH = {
     REGISTER: getPath("register"),
     VIDEOS: getPath("videos"),
     VIDEO_BY_ID: (id: string) => getPath(`videos/${id}`),
+
+    CHANNELS: getPath("channels"),
+    CHANNEL_BY_ID: (id: string) => getPath(`channels/${id}`),
+    CHANNEL_BY_USER_ID: (userId: string) => getPath(`channels/user/${userId}`),
+    VIDEOS_BY_CHANNEL: (channelId: string) => `videos/channel/${channelId}`,
 };
 
 function getPath(path: string): string {
