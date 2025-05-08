@@ -58,19 +58,19 @@ pipeline {
                     #!/bin/bash
                     set -e
 
-                    echo '🛑 Stopping old container (ytt_be) if exists...'
-                    docker stop ytt_be || echo '→ no running container'
+                    echo '🛑 Stopping old container (ytt_fe) if exists...'
+                    docker stop ytt_fe || echo '→ no running container'
 
                     echo '🗑 Removing old container...'
-                    docker rm ytt_be   || echo '→ no container to remove'
+                    docker rm ytt_fe   || echo '→ no container to remove'
 
                     echo '⬇️ Pulling new image ${DOCKER_IMAGE}:${DOCKER_TAG}...'
                     docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
 
                     echo '🏃‍♂️ Starting new container...'
-                    docker run -d --name ytt_be \
+                    docker run -d --name ytt_fe \
                         -e NODE_ENV=production \
-                        -p 5000:5000 \
+                        -p 80:80 \
                         ${DOCKER_IMAGE}:${DOCKER_TAG}
 
                     echo '✅ Deployment complete.'
