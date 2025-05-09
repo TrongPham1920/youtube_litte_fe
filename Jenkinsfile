@@ -74,7 +74,7 @@ pipeline {
                     echo '🏃‍♂️ Starting new container...'
                     docker run -d --name ytt_fe \
                         -e NODE_ENV=production \
-                        -p 3000:3000 \
+                        -p 3000:80 \
                         ${DOCKER_IMAGE}:${DOCKER_TAG}
 
                     echo '✅ Deployment ytt_fe complete.'
