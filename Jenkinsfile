@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
-    when {
-        branch 'main'
-    }
+    // when {
+    //     branch 'main'
+    // }
 
     environment {
         DOCKER_IMAGE = 'trong19/ytt_fe'
