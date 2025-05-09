@@ -27,7 +27,7 @@ export interface Video {
     title: string;
     description?: string;
     videoUrl: string;
-    channelId: string;
+    channelId: string | Channel;
 }
 export interface Channel {
     _id?: string;
@@ -36,7 +36,10 @@ export interface Channel {
     avatar?: string;
     userId?: string;
 }
-
+interface UploadImageResponse {
+    message: string;
+    imageUrl: string;
+}
 // Function to handle API response
 const handleApiResponse = async (response: Response) => {
     const data = await response.json();
@@ -62,7 +65,7 @@ export const login = async (credentials: LoginCredentials): Promise<ApiResponse>
 // Register function
 export const register = async (credentials: RegisterCredentials): Promise<ApiResponse> => {
     try {
-        const response = await fetch(API_PATH.LOGIN, {
+        const response = await fetch(API_PATH.REGISTER, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -217,3 +220,25 @@ export const getVideosByChannelId = async (channelId: string): Promise<Video[]> 
     }
     return response.json();
 };
+export const uploadImage = async (file: File): Promise<UploadImageResponse> => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const response = await fetch(API_PATH.UPLOAD_IMAGE, {
+            method: 'POST',
+            body: formData,
+
+        });
+
+        if (!response.ok) {
+            throw new Error(`Upload failed: ${response.statusText}`);
+        }
+
+        const data: UploadImageResponse = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        throw error;
+    }
+}

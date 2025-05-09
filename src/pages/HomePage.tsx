@@ -1,7 +1,6 @@
-// pages/HomePage.tsx
 import React, { useState, useEffect } from 'react';
 import VideoCard from '../components/ui/VideoCard';
-import { getAllVideos, Video } from '../data/api/app/api'; // Giả định bạn đã tạo API để lấy video
+import { getAllVideos, Video, getChannelByUserId } from '../data/api/app/api'; // Thêm getChannelByUserId
 import { categories } from '../data/mockData'; // vẫn dùng category mock
 
 interface HomePageProps {
@@ -11,6 +10,7 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ onVideoClick }) => {
   const [selectedCategory, setSelectedCategory] = useState('1'); // Default to 'All'
   const [videos, setVideos] = useState<Video[]>([]);
+  const [userChannelId, setUserChannelId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -21,7 +21,26 @@ const HomePage: React.FC<HomePageProps> = ({ onVideoClick }) => {
         console.error('Error fetching videos:', err);
       }
     };
+
+    // Lấy channel ID của người dùng hiện tại (nếu đã đăng nhập)
+    const fetchUserChannel = async () => {
+      try {
+        // Lấy userId từ localStorage hoặc context/redux state
+        const userId = localStorage.getItem('userId'); // hoặc từ context của bạn
+        
+        if (userId) {
+          const channel = await getChannelByUserId(userId);
+          if (channel && channel._id) {
+            setUserChannelId(channel._id);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching user channel:', err);
+      }
+    };
+
     fetchVideos();
+    fetchUserChannel();
   }, []);
 
   const handleCategoryChange = (categoryId: string) => {
@@ -32,7 +51,13 @@ const HomePage: React.FC<HomePageProps> = ({ onVideoClick }) => {
   const filteredVideos =
     selectedCategory === '1'
       ? videos
-      : videos.filter((video) => video.channelId === selectedCategory); // hoặc video.categoryId nếu backend có
+      : videos.filter((video) => {
+          // Kiểm tra xem channelId có phải là object hay string
+          if (typeof video.channelId === 'object' && video.channelId && '_id' in video.channelId) {
+            return video.channelId._id === selectedCategory;
+          }
+          return video.channelId === selectedCategory;
+        }); // hoặc video.categoryId nếu backend có
 
   return (
     <div className="p-4 md:p-6">
@@ -54,16 +79,29 @@ const HomePage: React.FC<HomePageProps> = ({ onVideoClick }) => {
           ))}
         </div>
       </div>
-
       {/* Videos Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredVideos.map((video) => (
-          <VideoCard
-            key={video._id}
-            video={video}
-            onClick={() => onVideoClick(video._id!)}
-          />
-        ))}
+        {filteredVideos.map((video) => {
+          // Kiểm tra xem người dùng có phải là chủ của channel này không
+          let isOwner = false;
+          
+          if (userChannelId) {
+            if (typeof video.channelId === 'object' && video.channelId && '_id' in video.channelId) {
+              isOwner = video.channelId._id === userChannelId;
+            } else {
+              isOwner = video.channelId === userChannelId;
+            }
+          }
+          
+          return (
+            <VideoCard
+              key={video._id}
+              video={video}
+              onClick={() => onVideoClick(video._id!)}
+              isChannelOwner={isOwner}
+            />
+          );
+        })}
       </div>
     </div>
   );
