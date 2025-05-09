@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-
 import Modal from '../../ui/Modal';
 import InputField from '../../ui/InputField';
 import PasswordInputField from '../../ui/PasswordInputField';
-import { register } from '../../../data/api/app/api';
+import Notification from '../../ui/Notification';
 
+import { register } from '../../../data/api/app/api';
+import { validateInputs } from '../../../types/validate';
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -16,35 +17,50 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLo
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<{ email?: string; password?: string; username?: string }>({});
+  const [serverError, setServerError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setError(null);
+    setServerError(null);
+
+    // Validate inputs
+    const validationErrors = validateInputs({ email, password, username });
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
     setIsLoading(true);
     const response = await register({ username, email, password });
     setIsLoading(false);
+
     if (!response.success) {
-      setError(response.message || 'Registration failed');
+      setServerError(response.message || 'Registration failed');
       return;
     }
-    onSwitchToLogin(); 
+
+    onSwitchToLogin();
   };
+
   const handleClose = () => {
     setEmail('');
     setPassword('');
     setUsername('');
-    setError(null);
+    setErrors({});
+    setServerError(null);
     onClose();
   };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Sign Up">
       <div>
-        {error && (
-          <div className="mb-4 text-red-600 text-sm">{error}</div>
-        )}
+        {serverError && <Notification message={serverError} type="error" />}
+        {errors.username && <Notification message={errors.username} type="error" />}
+        {errors.email && <Notification message={errors.email} type="error" />}
+        {errors.password && <Notification message={errors.password} type="error" />}
         <InputField
           label="Username"
           type="text"
