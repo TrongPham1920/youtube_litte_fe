@@ -18,6 +18,6 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Copy cấu hình nginx custom nếu cần (tùy chọn)
 # COPY nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 80
+EXPOSE 3000
 
 CMD ["nginx", "-g", "daemon off;"]
